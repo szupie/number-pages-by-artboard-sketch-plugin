@@ -1,0 +1,55 @@
+function onRun(context) {
+
+	// handle user-defined placeholder name to match
+
+	const sketch = context.api();
+
+	let PAGE_LAYER_NAME = sketch.settingForKey("page_number_placeholder_name");
+	if (!PAGE_LAYER_NAME) PAGE_LAYER_NAME = '${page_number}';
+
+	PAGE_LAYER_NAME = sketch.getStringFromUser("Layer name of page number placeholders", PAGE_LAYER_NAME);
+	
+	sketch.setSettingForKey("page_number_placeholder_name", PAGE_LAYER_NAME);
+
+	overridePageNumbers(context.document.currentPage(), PAGE_LAYER_NAME);
+}
+
+function overridePageNumbers(page, name) {
+	const artboards = page.artboards();
+
+	let pageCount = 0;
+
+	for (let i=artboards.count()-1; i>=0; i--) {
+		const layers = artboards[i].children();
+		pageCount++;
+
+		for (let j=0; j<layers.count(); j++) {
+			const layer = layers[j];
+
+			if (layer.className() == 'MSSymbolInstance') {
+				const existing = layer.overrides();
+				const newOverrides = NSMutableDictionary.dictionaryWithDictionary(existing);
+				const matchedLayers = getLayerIdsByName(layer, name);
+
+				for (let k=0; k<matchedLayers.length; k++) {
+					const layerId = matchedLayers[k];
+					newOverrides.setObject_forKey(`${pageCount}`, layerId);
+				}
+				layer.overrides = newOverrides;
+			}
+		}
+	}
+}
+
+function getLayerIdsByName(instance, name){
+	const layers = instance.symbolMaster().children();
+	const layerIDs = [];
+
+	for (let i=0; i<layers.count(); i++){
+		const layer = layers[i];
+		if (layer.name() == `${name}`) {
+			layerIDs.push(layer.objectID());
+		}
+	}
+	return layerIDs;
+}

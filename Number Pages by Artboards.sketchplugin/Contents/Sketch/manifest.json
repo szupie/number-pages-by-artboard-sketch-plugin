@@ -1,0 +1,21 @@
+{
+	"author" : "szupie",
+	"commands" : [
+		{
+			"script" : "script.cocoascript",
+			"name" : "Number Pages by Artboards",
+			"handlers" : {
+				"run" : "onRun"
+			},
+			"identifier" : "com.szupie.pagenumbers"
+		}
+	],
+	"menu" : {
+		"items" : ["com.szupie.pagenumbers"],
+		"isRoot": true
+	},
+	"identifier" : "com.example.sketch.42e53909-67c6-4574-beee-c76fec345c4a",
+	"version" : "1.0",
+	"description" : "Automatically update symbol overrides with page numbers",
+	"name" : "Number Pages by Artboards"
+}
